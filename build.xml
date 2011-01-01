@@ -1,0 +1,89 @@
+<project name="SuperTweet Local Twitter Proxy" default="build">
+	<property environment="env" />
+
+	<property name="war.dir" value="war" />
+	<property name="dist.dir" value="dist" />
+	<property name="web.inf" value="${war.dir}/WEB-INF" />
+	<property name="classes" value="${web.inf}/classes" />
+	<property name="war.lib" value="${web.inf}/lib" />
+	<property name="ext.lib" value="extlib" />
+
+	<path id="project.classpath">
+		<pathelement path="war/WEB-INF/classes" />
+		<fileset dir="${ext.lib}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<target name="clean" description="Remove war directory">
+		<delete dir="${war.dir}" />
+	</target>
+
+	<target name="setup" description="Copies the App Engine JARs and application support jars to the WAR directory.">
+		<mkdir dir="${classes}" />
+		<mkdir dir="${war.lib}" />
+
+		<copy todir="${war.lib}" flatten="true">
+			<fileset dir="${ext.lib}">
+				<include name="**/*.jar" />
+                <exclude name="servlet-api*.jar"/>
+			</fileset>
+		</copy>
+
+		<copy todir="${web.inf}">
+			<fileset dir="webinf">
+				<include name="web.xml" />
+				<include name="appengine-web.xml" />
+			</fileset>
+		</copy>
+
+		<copy todir="${classes}">
+			<fileset dir="src">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+
+	</target>
+
+	<target name="build" depends="setup" description="Layout war/ directory, compiles Java source, copies other resource files to the WAR.">
+		<javac srcdir="src" destdir="${classes}" classpathref="project.classpath" debug="on" includeantruntime="false" />
+	</target>
+
+    <target name="war" depends="build" description="war task">
+        <mkdir dir="dist"/>
+        <jar destfile="dist/supertweet-local.war" basedir="${war.dir}"/>
+    </target>
+
+    <target name="datanucleusenhance" depends="build" description="Performs JDO enhancement on compiled data classes.">
+		<enhance_war war="${war.dir}" />
+	</target>
+
+	<target name="runserver" depends="datanucleusenhance" description="Starts the development server.">
+		<dev_appserver war="${war.dir}" address="localhost" port="8080"/>
+	</target>
+
+	<target name="update" depends="datanucleusenhance" description="Uploads the application to App Engine.">
+		<appcfg action="update" war="${war.dir}" />
+	</target>
+
+	<target name="update_indexes" depends="datanucleusenhance" description="Uploads just the datastore index configuration to App Engine.">
+		<appcfg action="update_indexes" war="$war.dir}" />
+	</target>
+
+	<target name="rollback" depends="datanucleusenhance" description="Rolls back an interrupted application update.">
+		<appcfg action="rollback" war="${war.dir}" />
+	</target>
+
+	<target name="request_logs" description="Downloads log data from App Engine for the application.">
+		<appcfg action="request_logs" war="${war.dir}">
+			<options>
+				<arg value="--num_days=5" />
+			</options>
+			<args>
+				<arg value="logs.txt" />
+			</args>
+		</appcfg>
+	</target>
+
+</project>
+

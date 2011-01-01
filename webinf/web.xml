@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
+	<display-name>NeoAuth Proxy Slave</display-name>
+	<!-- Application class name -->
+	<context-param>
+		<param-name>org.restlet.application</param-name>
+		<param-value>
+			neoauthlo.NeoAuthApplication  
+       </param-value>
+	</context-param>
+
+	<filter>
+		<filter-name>AuthFilterServlet</filter-name>
+		<filter-class>neoauthlo.servlet.AuthFilterServlet</filter-class>
+	</filter>
+
+	<filter>
+		<filter-name>RateLimitFilter</filter-name>
+		<filter-class>neoauthlo.servlet.RateLimitFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>AuthFilterServlet</filter-name>
+		<servlet-name>RestletServlet</servlet-name>
+	</filter-mapping>
+
+        <filter-mapping>
+                <filter-name>RateLimitFilter</filter-name>
+                <servlet-name>RestletServlet</servlet-name>
+        </filter-mapping>
+
+	<!-- Default Servlet -->
+	<servlet>
+		<servlet-name>default</servlet-name>
+		<servlet-class>org.mortbay.jetty.servlet.DefaultServlet</servlet-class>
+    <init-param>
+      <param-name>acceptRanges</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <init-param>
+      <param-name>dirAllowed</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <init-param>
+      <param-name>redirectWelcome</param-name>
+      <param-value>false</param-value>
+    </init-param>
+    <init-param>
+      <param-name>maxCacheSize</param-name>
+      <param-value>2000000</param-value>
+    </init-param>
+    <init-param>
+      <param-name>maxCachedFileSize</param-name>
+      <param-value>254000</param-value>
+    </init-param>
+    <init-param>
+      <param-name>maxCachedFiles</param-name>
+      <param-value>1000</param-value>
+    </init-param>
+    <init-param>
+      <param-name>useFileMappedBuffer</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>/robots.txt</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>/favicon.png</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>/favicon.ico</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>/favicon.gif</url-pattern>
+	</servlet-mapping>
+
+	<!-- Restlet adapter -->
+	<servlet>
+		<servlet-name>RestletServlet</servlet-name>
+		<servlet-class>org.restlet.ext.servlet.ServerServlet</servlet-class>
+	</servlet>
+
+	<!-- Catch all requests -->
+	<servlet-mapping>
+		<servlet-name>RestletServlet</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+</web-app>
