@@ -13,26 +13,6 @@
        </param-value>
 	</context-param>
 
-	<filter>
-		<filter-name>AuthFilterServlet</filter-name>
-		<filter-class>neoauthlo.servlet.AuthFilterServlet</filter-class>
-	</filter>
-
-	<filter>
-		<filter-name>RateLimitFilter</filter-name>
-		<filter-class>neoauthlo.servlet.RateLimitFilter</filter-class>
-	</filter>
-
-	<filter-mapping>
-		<filter-name>AuthFilterServlet</filter-name>
-		<servlet-name>RestletServlet</servlet-name>
-	</filter-mapping>
-
-        <filter-mapping>
-                <filter-name>RateLimitFilter</filter-name>
-                <servlet-name>RestletServlet</servlet-name>
-        </filter-mapping>
-
 	<!-- Default Servlet -->
 	<servlet>
 		<servlet-name>default</servlet-name>
