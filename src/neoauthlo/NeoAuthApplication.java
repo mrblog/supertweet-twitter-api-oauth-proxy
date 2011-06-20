@@ -93,6 +93,7 @@ public class NeoAuthApplication extends Application {
         router.attach("/1/users/suggestions", GeneralAPIProxyResource.class);
         router.attach("/1/users/suggestions/{slug}", GeneralAPIProxyResource.class);
         router.attach("/1/statuses/friends", GeneralAPIProxyResource.class);
+        router.attach("/1/statuses/friends/{id}", GeneralAPIProxyResource.class);
         router.attach("/1/statuses/followers", GeneralAPIProxyResource.class);
         
         router.attach("/1/{user}/lists", GeneralAPIProxyResource.class);
