@@ -18,7 +18,7 @@ public class oAuthConfig {
     }
 
     private  void loadCreds() {
-    	final String pfile = System.getProperty("user.home") + "/.supertweet/App.properties";
+    	final String pfile = ProxyConfig.getConfigFile(ProxyConfig.APP_PROPS);
 		logger.info("Retrieving App creds from " + pfile);
 		Properties appProps = new Properties();
 		FileInputStream in;

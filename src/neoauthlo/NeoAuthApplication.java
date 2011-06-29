@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import neoauthlo.resource.GeneralAPIProxyResource;
 import neoauthlo.resource.SetupAccessResource;
+import neoauthlo.util.ProxyConfig;
 import neoauthlo.util.oAuthConfig;
 
 import org.restlet.Application;
@@ -51,7 +52,7 @@ public class NeoAuthApplication extends Application {
         
         Map<String, Object> attrs = getContext().getAttributes();
 
-        logPath = System.getProperty("user.home") + "/.supertweet/logs";
+        logPath = ProxyConfig.getConfigRoot() + "/logs";
 
         attrs.put("oauth.config", new oAuthConfig());
 
@@ -174,7 +175,7 @@ public class NeoAuthApplication extends Application {
     private void loadUsers(MapVerifier verifier) {
     	FileReader fr;
         try {
-                fr = new FileReader(System.getProperty("user.home") + "/.supertweet/adminusers");
+                fr = new FileReader(ProxyConfig.getConfigFile("adminusers"));
         } catch (FileNotFoundException e) {
                 // no file, use hard-coded defaults
                 logger.info(e.getMessage());

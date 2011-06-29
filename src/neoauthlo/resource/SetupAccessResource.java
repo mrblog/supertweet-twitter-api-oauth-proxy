@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import neoauth.model.UserInfo;
 import neoauthlo.model.DataAccessManager;
+import neoauthlo.util.ProxyConfig;
 import neoauthlo.util.oAuthConfig;
 
 import org.restlet.data.Form;
@@ -34,7 +35,7 @@ public class SetupAccessResource extends SetupResource {
     	oAuthConfig oa = new oAuthConfig();
         String result = null;
         if (oa.getConsumer_key() == null) {
-        	result = errorHTML("Please configure your application consumer key and secret in " + System.getProperty("user.home") + "/.supertweet/App.properties");
+        	result = errorHTML("Please configure your application consumer key and secret in " + ProxyConfig.getConfigFile(ProxyConfig.APP_PROPS));
         } else {
         	Twitter twitter = new TwitterFactory().getInstance();
         	twitter.setOAuthConsumer(oa.getConsumer_key(), oa.getConsumer_secret());
@@ -53,7 +54,7 @@ public class SetupAccessResource extends SetupResource {
         		sb.append("\" />Enter the PIN reported by Twitter: <input name=\"pin\" type=\"text\" size=\"40\"/><br/>Desired SuperTweet Password: <input name=\"passwd\" type=\"text\" size=\"15\" /><br/><input type=\"submit\" value=\"Submit\" /></form>");
         		result = htmlWrapper(sb.toString());
         	} catch (TwitterException e) {
-        		result = errorHTML(e.getMessage() + " - check the settings in " + System.getProperty("user.home") + "/.supertweet/App.properties");
+        		result = errorHTML(e.getMessage() + " - check the settings in " + ProxyConfig.getConfigFile(ProxyConfig.APP_PROPS));
         	}
         }
         return new StringRepresentation(result, MediaType.TEXT_HTML);

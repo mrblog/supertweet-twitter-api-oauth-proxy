@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import neoauth.model.OAuthAccessToken;
 import neoauth.model.ScreennameMap;
 import neoauth.model.UserInfo;
+import neoauthlo.util.ProxyConfig;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -33,8 +34,8 @@ public class DataAccessManager {
 	    private static Cache cache;
 	    
 	    static {
-	    	rootpath = System.getProperty("user.home") + "/.supertweet/jos";
-	    	mgr = new CacheManager(System.getProperty("user.home") + "/.supertweet/ehcache-DataAccessManager.xml");
+	    	rootpath = ProxyConfig.getConfigRoot() + "/jos";
+	    	mgr = new CacheManager(ProxyConfig.getConfigFile("ehcache-DataAccessManager.xml"));
 	        cache = mgr.getCache("DataAccessManager");
 	    }
 	    
