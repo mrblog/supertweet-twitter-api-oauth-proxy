@@ -50,13 +50,6 @@ import com.Ostermiller.util.ExcelCSVPrinter;
 
 public class ProxyResource extends BaseResource {
 	
-	final private static int JSON = 1;
-	final private static int XML = 2;
-	final private static int RSS = 3;
-	final private static int ATOM = 4;
-
-	private int mediaType;
-	
 	private final static Logger logger = Logger.getLogger(ProxyResource.class.getName());
 
 	protected Representation authResult;
@@ -156,20 +149,6 @@ public class ProxyResource extends BaseResource {
         return params;
     }
     
-    private MediaType getMediaType() {
-		if (mediaType == XML) {
-			return MediaType.TEXT_XML;
-		} else if (mediaType == JSON) {
-			return MediaType.APPLICATION_JSON;
-		} else if (mediaType == RSS) {
-			return MediaType.APPLICATION_RSS;
-		} else if (mediaType == ATOM) {
-			return MediaType.APPLICATION_ATOM;
-		} else {
-			return MediaType.TEXT_PLAIN;
-		}
-
-    }
 	private void getToken(DataAccessManager dm, String id) {
 		aToken = null;
 	    try {
@@ -268,30 +247,9 @@ public class ProxyResource extends BaseResource {
 			getResponse().setStatus(status);
 		String req = getRequest().getResourceRef().getPath();
 		logError(req, status.getCode(), errmsg);
-		if (mediaType == XML || mediaType == RSS || mediaType == ATOM) {
-			return new StringRepresentation("<?xml version=\"1.0\"?>\n<hash>\n<request>" + req + "</request>\n<error>" + errmsg + "</error>\n</hash>\n", MediaType.TEXT_XML);
-		} else if (mediaType == JSON) {
-			return new StringRepresentation("{\"request\":\"" + req + "\",\"error\":\"" + errmsg + "\"}", MediaType.APPLICATION_JSON);
-		} else {
-			return new StringRepresentation("REQUEST: " + req + "\nERROR: " + errmsg + "\n",  MediaType.TEXT_PLAIN);
-		}
+		return new StringRepresentation("{\"request\":\"" + req + "\",\"error\":\"" + errmsg + "\"}", MediaType.APPLICATION_JSON);
 	}
 	
-	protected void domediaType(String req) {
-		if (req.endsWith(".xml")) {
-			mediaType = XML;
-		} else if (req.endsWith(".json")) {
-			mediaType = JSON;
-		} else if (req.endsWith(".rss")) {
-			mediaType = RSS;
-		} else if (req.endsWith(".atom")) {
-			mediaType = ATOM;
-		} else {
-			//logger.warning("unknown format: " + req);
-		}
-	}
-	
-
 	private static UrlEncodedFormEntity mapToFormEntity(final Map<String, String> fields) throws UnsupportedEncodingException {
 		final ArrayList<NameValuePair> values = new ArrayList<NameValuePair>(fields.size());
 		for (final Entry<String, String> entry : fields.entrySet()) {
@@ -312,7 +270,10 @@ public class ProxyResource extends BaseResource {
 	
 	protected Representation doRequest(String method, final Map<String, String> fields) {
 		String req = getRequest().getResourceRef().getPath();
-		domediaType(req);
+		if (!req.endsWith(".json")) {
+            getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+            return new StringRepresentation("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<errors>\n  <error code=\"34\">Sorry, that page does not exist</error>\n</errors>", MediaType.APPLICATION_XML);
+		}
 		if (!isAuthOk()) {
 			return authResult;
 		}
@@ -369,11 +330,11 @@ public class ProxyResource extends BaseResource {
 				getResponse().setStatus(new Status(statusCode));
 				InputStream is = request.getErrorStream();
 				final String data = IOUtils.toString(is);
-				return new StringRepresentation(data, getMediaType());
+				return new StringRepresentation(data, MediaType.APPLICATION_JSON);
 			} else {
 				InputStream is = request.getInputStream();
 				final String data = IOUtils.toString(is);	
-				return new StringRepresentation(data, getMediaType());
+				return new StringRepresentation(data, MediaType.APPLICATION_JSON);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -389,8 +350,9 @@ public class ProxyResource extends BaseResource {
 	
 	protected Representation doPostRequest(final Map<String, String> fields) {
 		String req = getRequest().getResourceRef().getPath();
-		domediaType(req);
-
+		if (!req.endsWith(".json")) {
+            return new StringRepresentation("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<errors>\n  <error code=\"34\">Sorry, that page does not exist</error>\n</errors>", MediaType.APPLICATION_XML);
+		}
 		if (!isAuthOk()) {
 			return authResult;
 		}
@@ -441,7 +403,7 @@ public class ProxyResource extends BaseResource {
 				getResponse().setStatus(new Status(c));
 				logError(req, c, "Twitter API:" + st.getReasonPhrase() + data.replaceAll("\n", "") + " fields: " + fields);
 			}
-			return new StringRepresentation(data, getMediaType());
+			return new StringRepresentation(data, MediaType.APPLICATION_JSON);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return errorRepresentation(Status.SERVER_ERROR_INTERNAL, e.getMessage());

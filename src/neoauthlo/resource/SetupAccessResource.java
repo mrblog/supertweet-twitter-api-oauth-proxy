@@ -22,8 +22,8 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.User;
-import twitter4j.http.AccessToken;
-import twitter4j.http.RequestToken;
+import twitter4j.auth.RequestToken;
+import twitter4j.auth.AccessToken;
 
 public class SetupAccessResource extends SetupResource {
 
@@ -86,13 +86,13 @@ public class SetupAccessResource extends SetupResource {
 			    //persist the accessToken for future reference.
 				logger.info("saving access token");
 				DataAccessManager dm = new DataAccessManager();
-				int id = accessToken.getUserId();
+				long id = accessToken.getUserId();
 				logger.info("accessToken.getUserId()=" + id);
 				//boolean firstTimeUser = !dm.existsOAuthAccessToken(id+"");
 				dm.storeOAuthAccessToken(id+"", accessToken.getToken(), accessToken.getTokenSecret());
 				String screenName = user.getScreenName();
 				logger.info("screenName: " + screenName);
-				dm.storeScreennameMap(screenName, id);
+				dm.storeScreennameMap(screenName, id+"");
 		        final String passwd = fields.get("passwd");
 		        UserInfo u = dm.getUserInfoByScreenname(screenName);
 	        	String sid = user.getId()+"";
