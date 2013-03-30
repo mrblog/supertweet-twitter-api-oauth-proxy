@@ -282,7 +282,7 @@ public class ProxyResource extends BaseResource {
     		oAuthCfg.getConsumer_secret());
 		consumer.setTokenWithSecret(aToken.getToken(),
             aToken.getTokenSecret());
-		StringBuffer urlStr = new StringBuffer("http://api.twitter.com");
+		StringBuffer urlStr = new StringBuffer("https://api.twitter.com");
 		urlStr.append(req);
 		String d = "?";
 		for (final Entry<String, String> entry : fields.entrySet()) {
@@ -365,7 +365,7 @@ public class ProxyResource extends BaseResource {
 		consumer.setTokenWithSecret(aToken.getToken(),
             aToken.getTokenSecret());
 		HttpPost apiPost = new HttpPost(
-    		"http://api.twitter.com" + req);
+    		"https://api.twitter.com" + req);
 
 		UrlEncodedFormEntity requestEntity;
 		try {
