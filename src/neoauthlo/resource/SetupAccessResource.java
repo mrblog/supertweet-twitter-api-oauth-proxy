@@ -45,9 +45,9 @@ public class SetupAccessResource extends SetupResource {
         		StringBuffer sb = new StringBuffer();
         		sb.append("<h2>Grant Access</h2><p>Open the following URL and grant access to your account:</p><p><a href=\"");
         		sb.append(requestToken.getAuthorizationURL());
-        		sb.append("\" target=\"_blank\">");
+        		sb.append("&oauth_callback=oob\" target=\"_blank\">");
         		sb.append(requestToken.getAuthorizationURL());
-        		sb.append("</a></p><p><form method=\"post\"><input name=\"token\" type=\"hidden\" value=\"");
+        		sb.append("&oauth_callback=oob</a></p><p><form method=\"post\"><input name=\"token\" type=\"hidden\" value=\"");
         		sb.append(requestToken.getToken());
         		sb.append("\" /><input name=\"secret\" type=\"hidden\" value=\"");
         		sb.append(requestToken.getTokenSecret());
