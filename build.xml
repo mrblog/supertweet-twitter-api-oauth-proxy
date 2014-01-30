@@ -46,7 +46,7 @@
 	</target>
 
 	<target name="build" depends="setup" description="Layout war/ directory, compiles Java source, copies other resource files to the WAR.">
-		<javac srcdir="src" destdir="${classes}" classpathref="project.classpath" debug="on" includeantruntime="false" />
+		<javac target="1.6" source="1.6" srcdir="src" destdir="${classes}" classpathref="project.classpath" debug="on" includeantruntime="false" />
 	</target>
 
     <target name="war" depends="build" description="war task">
